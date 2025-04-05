@@ -1006,16 +1006,25 @@ do
         local Container = self.Container;
 
         assert(Info.Default, 'AddKeyPicker: Missing default value.');
-
-		local KeyPicker = {
-		    Value = typeof(Info.Default) == "EnumItem" and Info.Default.Name or tostring(Info.Default);
-		    Toggled = false;
-		    Mode = Info.Mode or 'Toggle'; -- Always, Toggle, Hold
-		    Type = 'KeyPicker';
-		    Callback = Info.Callback or function(Value) end;
-		    ChangedCallback = Info.ChangedCallback or function(New) end;
 		
-		    SyncToggleState = Info.SyncToggleState or false;
+		local function getKeyName(defaultValue)
+		    if typeof(defaultValue) == "EnumItem" then
+		        if defaultValue.EnumType == Enum.UserInputType then
+		            return defaultValue == Enum.UserInputType.MouseButton1 and "MB1" or "MB2"
+		        end
+		        return defaultValue.Name
+		    end
+		    return tostring(defaultValue)
+		end
+		
+		local KeyPicker = {
+		    Value = getKeyName(Info.Default),
+		    Toggled = false,
+		    Mode = Info.Mode or 'Toggle', -- Always, Toggle, Hold
+		    Type = 'KeyPicker',
+		    Callback = Info.Callback or function(Value) end,
+		    ChangedCallback = Info.ChangedCallback or function(New) end,
+		    SyncToggleState = Info.SyncToggleState or false,
 		};
 
         if KeyPicker.SyncToggleState then
@@ -1046,12 +1055,12 @@ do
         });
 		
 		local DisplayLabel = Library:CreateLabel({
-		    Size = UDim2.new(1, 0, 1, 0);
-		    TextSize = 13;
-		    Text = typeof(Info.Default) == "EnumItem" and Info.Default.Name or tostring(Info.Default);
-		    TextWrapped = true;
-		    ZIndex = 8;
-		    Parent = PickInner;
+		    Size = UDim2.new(1, 0, 1, 0),
+		    TextSize = 13,
+		    Text = getKeyName(Info.Default),
+		    TextWrapped = true,
+		    ZIndex = 8,
+		    Parent = PickInner,
 		});
 
         local ModeSelectOuter = Library:Create('Frame', {
@@ -1174,26 +1183,27 @@ do
             Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 23)
         end;
 
-        function KeyPicker:GetState()
-            if KeyPicker.Mode == 'Always' then
-                return true;
-            elseif KeyPicker.Mode == 'Hold' then
-                if KeyPicker.Value == 'None' then
-                    return false;
-                end
-
-                local Key = KeyPicker.Value;
-
-                if Key == 'MB1' or Key == 'MB2' then
-                    return Key == 'MB1' and InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-                        or Key == 'MB2' and InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2);
-                else
-                    return InputService:IsKeyDown(Enum.KeyCode[KeyPicker.Value]);
-                end;
-            else
-                return KeyPicker.Toggled;
-            end;
-        end;
+		function KeyPicker:GetState()
+		    if KeyPicker.Mode == 'Always' then
+		        return true
+		    elseif KeyPicker.Mode == 'Hold' then
+		        if KeyPicker.Value == 'None' then
+		            return false
+		        end
+		
+		        local Key = KeyPicker.Value
+		
+		        if Key == 'MB1' then
+		            return InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+		        elseif Key == 'MB2' then
+		            return InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
+		        else
+		            return InputService:IsKeyDown(Enum.KeyCode[Key])
+		        end
+		    else
+		        return KeyPicker.Toggled
+		    end
+		end
 
         function KeyPicker:SetValue(Data)
             local Key, Mode = Data[1], Data[2];
