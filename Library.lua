@@ -1007,16 +1007,16 @@ do
 
         assert(Info.Default, 'AddKeyPicker: Missing default value.');
 
-        local KeyPicker = {
-            Value = Info.Default;
-            Toggled = false;
-            Mode = Info.Mode or 'Toggle'; -- Always, Toggle, Hold
-            Type = 'KeyPicker';
-            Callback = Info.Callback or function(Value) end;
-            ChangedCallback = Info.ChangedCallback or function(New) end;
-
-            SyncToggleState = Info.SyncToggleState or false;
-        };
+		local KeyPicker = {
+		    Value = typeof(Info.Default) == "EnumItem" and Info.Default.Name or tostring(Info.Default);
+		    Toggled = false;
+		    Mode = Info.Mode or 'Toggle'; -- Always, Toggle, Hold
+		    Type = 'KeyPicker';
+		    Callback = Info.Callback or function(Value) end;
+		    ChangedCallback = Info.ChangedCallback or function(New) end;
+		
+		    SyncToggleState = Info.SyncToggleState or false;
+		};
 
         if KeyPicker.SyncToggleState then
             Info.Modes = { 'Toggle' }
@@ -1044,15 +1044,15 @@ do
             BackgroundColor3 = 'BackgroundColor';
             BorderColor3 = 'OutlineColor';
         });
-
-        local DisplayLabel = Library:CreateLabel({
-            Size = UDim2.new(1, 0, 1, 0);
-            TextSize = 13;
-            Text = tostring(Info.Default);
-            TextWrapped = true;
-            ZIndex = 8;
-            Parent = PickInner;
-        });
+		
+		local DisplayLabel = Library:CreateLabel({
+		    Size = UDim2.new(1, 0, 1, 0);
+		    TextSize = 13;
+		    Text = typeof(Info.Default) == "EnumItem" and Info.Default.Name or tostring(Info.Default);
+		    TextWrapped = true;
+		    ZIndex = 8;
+		    Parent = PickInner;
+		});
 
         local ModeSelectOuter = Library:Create('Frame', {
             BorderColor3 = Color3.new(0, 0, 0);
