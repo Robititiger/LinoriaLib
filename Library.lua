@@ -659,7 +659,7 @@ do
             Position = UDim2.fromOffset(5, 5);
             TextXAlignment = Enum.TextXAlignment.Left;
             TextSize = 14;
-            Text = Info.Default.Name,--Info.Default;
+            Text = Info.Default,--Info.Default;
             TextWrapped = false;
             ZIndex = 16;
             Parent = PickerFrameInner;
