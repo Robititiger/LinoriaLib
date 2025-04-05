@@ -2041,7 +2041,7 @@ do
         local DisplayLabel = Library:CreateLabel({
             Size = UDim2.new(1, 0, 1, 0);
             TextSize = 14;
-            Text = Info.Default;
+            Text = 'Infinite';
             ZIndex = 9;
             Parent = SliderInner;
         });
